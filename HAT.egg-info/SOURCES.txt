@@ -1,0 +1,14 @@
+README.md
+setup.py
+HAT.egg-info/PKG-INFO
+HAT.egg-info/SOURCES.txt
+HAT.egg-info/dependency_links.txt
+HAT.egg-info/entry_points.txt
+HAT.egg-info/top_level.txt
+hat/HAT_main.py
+hat/Phasing.py
+hat/PloidyBlocks.py
+hat/ReadInput.py
+hat/Seeds.py
+hat/Visualization.py
+hat/__init__.py

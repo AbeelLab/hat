@@ -1,2 +1,1 @@
-# hat
-Haplotype Assembly Tool
+HAT code
