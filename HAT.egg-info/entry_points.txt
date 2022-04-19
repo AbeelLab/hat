@@ -1,3 +1,0 @@
-[console_scripts]
-HAT = hat.HAT_main:main
-
