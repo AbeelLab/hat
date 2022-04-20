@@ -19,6 +19,6 @@ setup(
                       'matplotlib',
                       'biopython==1.79'],
     entry_points={'console_scripts': ['HAT = hat.HAT_main:main']},
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     description='HAT:‌  Haplotype assembly tool that use both long and short reads to reconstruct haplotypes'
 )
