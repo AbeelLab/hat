@@ -116,10 +116,10 @@ def Save_output(all_phase_matrix, ploidy_blocks, all_blocks, all_short_reads, al
             f.write(" PLOIDY BLOCK    ")
             f.write(str(ploidy_b))
             f.write("\n")
-            f.write(str(blocks[b]))
+            f.write(str(all_blocks[b]))
             f.write("\n")
             writer = csv.writer(f, delimiter="\t")
-            writer.writerows(phase_matrix[b])
+            writer.writerows(all_phase_matrix[b])
     with open(output_dir + output_prefix + "_phased_reads_blocks", "w") as f:
         for b, ploidy_b in enumerate(list(ploidy_blocks.keys())):
             f.write(" PLOIDY BLOCK     ")
@@ -238,11 +238,6 @@ def main():
     if short_read_alignment_file != None and long_read_alignment_file != 'None':
         print("Both short reads and long reads are available")
         results = Run_HAT(vcf_file, read_length, gene_location, chromosome_name, reference_fa, short_read_alignment_file, long_read_alignment_file, long_reads_fa, assembly, ploidy, output_prefix, output_dir)
-        phase_matrix = results[0]
-        ploidy_blocks = results[1]
-        blocks = results[2]
-        blocks_short_read = results[3]
-        blocks_long_read = results[4]
     elif long_read_alignment_file == 'None' and short_read_alignment_file != None:
         print("short reads only, under development")
     elif short_read_alignment_file == 'None' and long_read_alignment_file != None:
