@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='HAT_phasing',
-    version='0.0.4',
+    version='0.0.5',
     packages=['hat'],
     url='',
     license='GPL-3.0-or-later',
@@ -13,7 +13,7 @@ setup(
     author_email='r.shirali.hz@gmail.com',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=['pysam==1.19.0',
+    install_requires=['pysam==0.19.0',
                       'numpy>=1.22.3',
                       'seaborn',
                       'matplotlib',
