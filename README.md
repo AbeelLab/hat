@@ -28,7 +28,8 @@ pip install HAT-phasing
 
 ```
 usage: HAT [-h] [-rl READ_LENGTH] [-pl PHASING_LOCATION] [-r REFERENCE_FILE] [-lf LONGREADS_FASTA]
-           [-th TRUE_HAPLOTYPES] [-ma MULTIPLE_GENOME_ALIGNMENT] [-ha HAPLOTYPE_ASSEMBLY]
+           [-sf1 SHORTREADS_1_FASTQ] [-sf2 SHORTREADS_2_FASTQ] [-th TRUE_HAPLOTYPES]
+           [-ma MULTIPLE_GENOME_ALIGNMENT] [-ha HAPLOTYPE_ASSEMBLY]
            chromosome_name vcf_file short_read_alignment long_read_alignment ploidy output output_dir
 
 positional arguments:
@@ -50,6 +51,10 @@ optional arguments:
                         reference file
   -lf LONGREADS_FASTA, --longreads_fasta LONGREADS_FASTA
                         long reads fasta file
+  -sf1 SHORTREADS_1_FASTQ, --shortreads_1_fastq SHORTREADS_1_FASTQ
+                        first pair fastq file
+  -sf2 SHORTREADS_2_FASTQ, --shortreads_2_fastq SHORTREADS_2_FASTQ
+                        second pair fastq file
   -th TRUE_HAPLOTYPES, --true_haplotypes TRUE_HAPLOTYPES
                         the correct haplotypes file
   -ma MULTIPLE_GENOME_ALIGNMENT, --multiple_genome_alignment MULTIPLE_GENOME_ALIGNMENT
@@ -58,7 +63,7 @@ optional arguments:
                         Assembly of the haplotype sequences
 ```
 
-The -ha option requires minimap2, bwa, miniasm and Pilon. Currently, HAT looks in the PATH to find these tools.
+The -ha option requires minimap2, bwa, miniasm, seqkit and Pilon.  Currently, HAT looks in the PATH to find these tools. In addition, -ha option needs long reads fasta file and short reads fastq file.
 
 # Example
 
@@ -77,7 +82,7 @@ In this example, we have used bwa mem and minimap2 for the alignments and FreeBa
 To reconstruct the haplotypes, we use the following command:
 
 ```
-HAT CP048984.1 -r CP048984.1.fna snp-var.vcf.gz short_reads_alignment.sorted.bam \
+HAT -r CP048984.1.fna CP048984.1 snp-var.vcf.gz short_reads_alignment.sorted.bam \
  long_reads_alignment.sorted.bam 3 hat_output results/
 ```
 

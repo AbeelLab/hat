@@ -20,7 +20,7 @@ def print_number_phased_variants(phase_matrix, blocks):
    print("blocks = ", len(blocks), " phased_variants = ", count)
    return count, len(blocks)
 
-def Run_HAT(vcf_file, read_length, gene_location, chromosome_name, reference_fa, short_read_alignment_file, long_read_alignment_file, long_reads_fa, assembly, ploidy, output_prefix, output_dir):
+def Run_HAT(vcf_file, read_length, gene_location, chromosome_name, reference_fa, short_read_alignment_file, long_read_alignment_file, long_reads_fa, assembly, ploidy, output_prefix, output_dir, longreads_fasta, shortreads_1_fastq, shortreads_2_fastq):
     variations = ParseVCF_pysam(vcf_file, gene_location, chromosome_name)
     var_locs = list(variations.keys())
     genome_size = Genome_size_from_reference(reference_fa)
@@ -107,9 +107,9 @@ def Run_HAT(vcf_file, read_length, gene_location, chromosome_name, reference_fa,
         all_long_reads.append(blocks_long_reads)
         all_blocks.append(blocks)
     print("Phasing finished")
-    Save_output(all_phase_matrix, ploidy_blocks, all_blocks, all_short_reads, all_long_reads, assembly, output_prefix, output_dir)
+    Save_output(all_phase_matrix, ploidy_blocks, all_blocks, all_short_reads, all_long_reads, assembly, output_prefix, output_dir, longreads_fasta, shortreads_1_fastq, shortreads_2_fastq)
 
-def Save_output(all_phase_matrix, ploidy_blocks, all_blocks, all_short_reads, all_long_reads, assembly, output_prefix, output_dir):
+def Save_output(all_phase_matrix, ploidy_blocks, all_blocks, all_short_reads, all_long_reads, assembly, output_prefix, output_dir, longreads_fasta, shortreads_1_fastq, shortreads_2_fastq):
     with open(output_dir + output_prefix + "_phase_matrix.csv", "w") as f:
         for b, ploidy_b in enumerate(list(ploidy_blocks.keys())):
             f.write(" PLOIDY BLOCK    ")
@@ -167,17 +167,18 @@ def Save_output(all_phase_matrix, ploidy_blocks, all_blocks, all_short_reads, al
                         for record in all_short_reads[pb][b][h]:
                             out_short_reads_haplotype_block.write(record[5].qname + "\n")
                     os.system("seqkit grep -f " + output_dir + haplotype_dir + output_prefix + "_" + str(
-                        h) + '_short_read.list ' + "../../../../CBS1483/Reads/SRR8648839_1.fq > " + output_dir + haplotype_dir + output_prefix + "_" + str(
+                        h) + '_short_read.list ' + shortreads_2_fastq + " > " + output_dir + haplotype_dir + output_prefix + "_" + str(
                         h) + '_short_read_1.fastq')
-                    os.system("seqkit grep -f " + output_dir + haplotype_dir + output_prefix + "_" + str(
-                        h) + '_short_read.list ' + "../../../../CBS1483/Reads/SRR8648839_2.fq > " + output_dir + haplotype_dir + output_prefix + "_" + str(
-                        h) + '_short_read_2.fastq')
+                    if short_2_path != None:
+                        os.system("seqkit grep -f " + output_dir + haplotype_dir + output_prefix + "_" + str(
+                            h) + '_short_read.list ' + shortreads_1_fastq + " > " + output_dir + haplotype_dir + output_prefix + "_" + str(
+                            h) + '_short_read_2.fastq')
                     with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_long_read.list',
                               "w") as out_long_reads_haplotype_block:
                         for record in all_long_reads[pb][b][h]:
                             out_long_reads_haplotype_block.write(record[5].qname + "\n")
                     os.system("seqkit grep -f " + output_dir + haplotype_dir + output_prefix + "_" + str(
-                        h) + '_long_read.list ' + "../../../../CBS1483/Reads/all_long_reads.fa > " + output_dir + haplotype_dir + output_prefix + "_" + str(
+                        h) + '_long_read.list ' + longreads_fasta + " > " + output_dir + haplotype_dir + output_prefix + "_" + str(
                         h) + '_long_read.fasta')
                     pb_size = int(pb_name.split(",")[1]) + 12600 - int(pb_name.split(",")[0]) + 1
                     print("pb name", pb_name, pb_size)
@@ -197,6 +198,8 @@ def main():
     parser.add_argument("-pl", "--phasing_location", help="the location in the chromosome which is phased", type=str)
     parser.add_argument("-r", "--reference_file", help="reference file", type=str)
     parser.add_argument("-lf", "--longreads_fasta", help="long reads fasta file", type=str)
+    parser.add_argument("-sf1", "--shortreads_1_fastq", help="first pair fastq file")
+    parser.add_argument("-sf2", "--shortreads_2_fastq", help="second pair fastq file")
     parser.add_argument("-th", "--true_haplotypes", help="the correct haplotypes file", type=str)
     parser.add_argument("-ma", "--multiple_genome_alignment",
                         help="Multiple genome alignment file of haplotypes to the reference", type=str)
@@ -223,18 +226,24 @@ def main():
     short_read_alignment_file = args.short_read_alignment
     vcf_file = args.vcf_file
     true_haplotypes_file = args.true_haplotypes
+    short_reads_1 = args.shortreads_1_fastq
+    short_reads_2 = args.shortreads_2_fastq
     reference_fa = args.reference_file
     long_reads_fa = args.longreads_fasta
     ploidy = args.ploidy
     output_dir = args.output_dir
     reference_alignment_file = args.multiple_genome_alignment
     assembly = args.haplotype_assembly
+    if assembly:
+        if short_reads_1 == None or long_reads_fa == None:
+            print("The long reads fasta file and short reads fastq file is required for assembling the haplotypes")
+            return
     if not output_dir.endswith("/"):
         output_dir = output_dir + "/"
     output_prefix = args.output
     if short_read_alignment_file != None and long_read_alignment_file != 'None':
         print("Both short reads and long reads are available")
-        results = Run_HAT(vcf_file, read_length, gene_location, chromosome_name, reference_fa, short_read_alignment_file, long_read_alignment_file, long_reads_fa, assembly, ploidy, output_prefix, output_dir)
+        results = Run_HAT(vcf_file, read_length, gene_location, chromosome_name, reference_fa, short_read_alignment_file, long_read_alignment_file, long_reads_fa, assembly, ploidy, output_prefix, output_dir, long_reads_fa, short_reads_1, short_reads_2)
     elif long_read_alignment_file == 'None' and short_read_alignment_file != None:
         print("short reads only, under development")
     elif short_read_alignment_file == 'None' and long_read_alignment_file != None:
