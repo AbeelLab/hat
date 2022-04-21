@@ -82,6 +82,7 @@ In this example, we have used bwa mem and minimap2 for the alignments and FreeBa
 To reconstruct the haplotypes, we use the following command:
 
 ```
+cd Example/haplosim-triploid-CP048984.1-highhetero/
 HAT -r CP048984.1.fna CP048984.1 snp-var.vcf.gz short_reads_alignment.sorted.bam \
  long_reads_alignment.sorted.bam 3 hat_output results/
 ```
@@ -94,7 +95,10 @@ This command phase the CP048984.1 chromosome, and provide 4 outputs in the resul
 
 The ploidy blocks are the regions that have sufficient differences between the haplotypes. HAT operates in these regions and find the alleles of the haplotypes. The following figure shows the ploidy blocks HAT found in the example dataset.
 
-![Caption from the paper](Example/haplosim-triploid-CP048984.1-highhetero/results/ploidy_blocks.png "")
+![Ploidy blocks HAT finds for the example dataset. The long, black vertical lines at the bottom show
+the SNPs and their positions on the chromosome found by FreeBayes. From these SNPS, HAT finds the seeds shown in short, black vertical lines in panel above the SNPs. The seeds are
+placed vertically based on the number of combination of alleles they have, ranging from 1 to 6 (y axis). HAT uses these seeds to find ploidy blocks, which are shaded regions encapsulating
+the seeds and the color of the region indicates the estimated ploidy level. See the legend for the colors corresponding to different ploidy levels.](Example/haplosim-triploid-CP048984.1-highhetero/results/ploidy_blocks.png "")
 
 
  The phase_matrix output has the alleles haplotypes for the SNP loci.
