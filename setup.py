@@ -5,9 +5,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='HAT_phasing',
-    version='0.0.6',
+    version='0.1.0',
     packages=['hat'],
-    url='',
+    url='https://github.com/AbeelLab/hat/tree/main',
     license='GPL-3.0-or-later',
     author='Ramin Shirali Hossein Zade',
     author_email='r.shirali.hz@gmail.com',
