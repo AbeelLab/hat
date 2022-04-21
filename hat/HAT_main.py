@@ -5,7 +5,6 @@ from hat.PloidyBlocks import Finding_ploidy_blocks_alg3, Ploidy_blocks_coverage,
 from hat.Visualization import Draw_seeds_on_chromosome
 from hat.Phasing import Phase_from_Seeds, Assign_ShortReads_to_Blocks, Assign_LongReads_to_Blocks_Simmilarity, Connecting, Fill_block
 import argparse
-import pickle
 import csv
 import numpy as np
 
@@ -142,8 +141,6 @@ def Save_output(all_phase_matrix, ploidy_blocks, all_blocks, all_short_reads, al
                         f.write(read[5].qname + "\n")
                     f.write("\n")
 
-    with open(output_dir + output_prefix + "_phasematrix_pickle", 'wb') as handle:
-        pickle.dump(all_phase_matrix, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     zeros = 0
     size = 0

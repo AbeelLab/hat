@@ -5,8 +5,15 @@ HAT gets a VCF file containing SNPs, sorted bam file of NGS data alignment to th
 
 
 # Installation
-
-    python setup.py install
+```
+git clone https://github.com/AbeelLab/hat
+cd hat
+pip install .
+```
+or
+```
+pip install HAT-phasing
+```
 
 ## Requirements
 
@@ -50,7 +57,41 @@ optional arguments:
   -ha HAPLOTYPE_ASSEMBLY, --haplotype_assembly HAPLOTYPE_ASSEMBLY
                         Assembly of the haplotype sequences
 ```
+
+The -ha option requires minimap2, bwa, miniasm and Pilon. Currently, HAT looks in the PATH to find these tools.
+
 # Example
 
+To reconstruct the haplotypes, HAT needs 3 input:
+
+- Sorted bam file from the alignment of short reads to the reference genome
+- Sorted bam file from the alignment of long reads to the reference genome
+- SNPs selected from a VCF file created by any variant calling tool.
+
+In this example, we have used bwa mem and minimap2 for the alignments and FreeBayes to find variants. Later, we have used vcffilter to select the SNPs from the VCF file. The input files are:
+
+- Example/haplosim-triploid-CP048984.1-highhetero/short_reads_alignment.sorted.bam
+- Example/haplosim-triploid-CP048984.1-highhetero/long_reads_alignment.sorted.bam
+- Example/haplosim-triploid-CP048984.1-highhetero/snp-var.vcf.gz
+
+To reconstruct the haplotypes, we use the following command:
+
+```
+HAT CP048984.1 -r CP048984.1.fna snp-var.vcf.gz short_reads_alignment.sorted.bam \
+ long_reads_alignment.sorted.bam 3 hat_output results/
+```
+
+This command phase the CP048984.1 chromosome, and provide 4 outputs in the results directory:
+
+- hat_output_ploidy_blocks figure
+- hat_output_phase_matrix
+- hat_output_phased_blocks
+
+The ploidy blocks are the regions that have sufficient differences between the haplotypes. HAT operates in these regions and find the alleles of the haplotypes. The following figure shows the ploidy blocks HAT found in the example dataset.
+
+![Caption from the paper](Example/haplosim-triploid-CP048984.1-highhetero/results/ploidy_blocks.png "")
 
 
+ The phase_matrix output has the alleles haplotypes for the SNP loci.
+
+The phased_blocks output has the read clustering and shows the reads that are assigned to haplotypes and blocks.
