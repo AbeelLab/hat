@@ -14,6 +14,10 @@ or
 ```
 pip install HAT-phasing
 ```
+or
+```
+conda install -c bioconda hat-phasing
+```
 
 ## Requirements
 
