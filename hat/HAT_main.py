@@ -167,11 +167,11 @@ def Save_output(all_phase_matrix, ploidy_blocks, all_blocks, all_short_reads, al
                         for record in all_short_reads[pb][b][h]:
                             out_short_reads_haplotype_block.write(record[5].qname + "\n")
                     os.system("seqkit grep -f " + output_dir + haplotype_dir + output_prefix + "_" + str(
-                        h) + '_short_read.list ' + shortreads_2_fastq + " > " + output_dir + haplotype_dir + output_prefix + "_" + str(
+                        h) + '_short_read.list ' + shortreads_1_fastq + " > " + output_dir + haplotype_dir + output_prefix + "_" + str(
                         h) + '_short_read_1.fastq')
-                    if short_2_path != None:
+                    if shortreads_2_fastq != None:
                         os.system("seqkit grep -f " + output_dir + haplotype_dir + output_prefix + "_" + str(
-                            h) + '_short_read.list ' + shortreads_1_fastq + " > " + output_dir + haplotype_dir + output_prefix + "_" + str(
+                            h) + '_short_read.list ' + shortreads_2_fastq + " > " + output_dir + haplotype_dir + output_prefix + "_" + str(
                             h) + '_short_read_2.fastq')
                     with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_long_read.list',
                               "w") as out_long_reads_haplotype_block:

@@ -5,10 +5,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='HAT_phasing',
-    version='0.1.1',
+    version='0.1.5',
     packages=['hat'],
     url='https://github.com/AbeelLab/hat',
-    license='GPL-3.0-or-later',
+    license='GPL-3.0',
     author='Ramin Shirali Hossein Zade',
     author_email='r.shirali.hz@gmail.com',
     long_description=long_description,
