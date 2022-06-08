@@ -7,6 +7,7 @@ from hat.Phasing import Phase_from_Seeds, Assign_ShortReads_to_Blocks, Assign_Lo
 import argparse
 import csv
 import numpy as np
+from Bio import SeqIO
 
 def print_number_phased_variants(phase_matrix, blocks):
    count = 0
@@ -162,7 +163,30 @@ def Save_output(all_phase_matrix, ploidy_blocks, all_blocks, all_short_reads, al
                     if not os.path.exists(output_dir + haplotype_dir):
                         os.mkdir(output_dir + haplotype_dir)
                     print(output_dir + haplotype_dir)
-                    with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read.list',
+                    fastq_record_ending_weird = False
+                    if next(SeqIO.parse(shortreads_1_fastq , "fastq")).seqname.endswith("\1"):
+                        fastq_record_ending = True
+                    if fastq_record_ending_weird:
+                        with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read_1.list',
+                                  "w") as out_short_reads_haplotype_block:
+                            for record in all_short_reads[pb][b][h]:
+                                out_short_reads_haplotype_block.write(record[5].qname + "\1" + "\n")
+                    else:
+                        with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read_1.list',
+                                  "w") as out_short_reads_haplotype_block:
+                            for record in all_short_reads[pb][b][h]:
+                                out_short_reads_haplotype_block.write(record[5].qname + "\n")
+                    if fastq_record_ending_weird:
+                        with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read_2.list',
+                                  "w") as out_short_reads_haplotype_block:
+                            for record in all_short_reads[pb][b][h]:
+                                out_short_reads_haplotype_block.write(record[5].qname + "\2" + "\n")
+                    else:
+                        with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read_2.list',
+                                  "w") as out_short_reads_haplotype_block:
+                            for record in all_short_reads[pb][b][h]:
+                                out_short_reads_haplotype_block.write(record[5].qname + "\n")
+                    with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read_2.list',
                               "w") as out_short_reads_haplotype_block:
                         for record in all_short_reads[pb][b][h]:
                             out_short_reads_haplotype_block.write(record[5].qname + "\n")
@@ -189,7 +213,7 @@ def Save_output(all_phase_matrix, ploidy_blocks, all_blocks, all_short_reads, al
                     os.system(
                         "minimap2 -x ava-ont " + long_reads_path + " " + long_reads_path + " > " + long_reads_overlap)
                     os.system(
-                        "miniasm -f " + long_reads_path + " " + long_reads_overlap + " " + output_dir + haplotype_dir + str(
+                        "miniasm -f " + long_reads_path + " " + long_reads_overlap + " > " + output_dir + haplotype_dir + str(
                             h) + "_assembly.gfa")
 
 def main():
