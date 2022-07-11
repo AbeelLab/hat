@@ -164,38 +164,42 @@ def Save_output(all_phase_matrix, ploidy_blocks, all_blocks, all_short_reads, al
                         os.mkdir(output_dir + haplotype_dir)
                     print(output_dir + haplotype_dir)
                     fastq_record_ending_weird = False
-                    if next(SeqIO.parse(shortreads_1_fastq , "fastq")).seqname.endswith("\1"):
-                        fastq_record_ending = True
+                    if next(SeqIO.parse(shortreads_1_fastq ,
+                                        "fastq")).name.endswith("/1"):
+                        fastq_record_ending_weird = True
                     if fastq_record_ending_weird:
                         with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read_1.list',
                                   "w") as out_short_reads_haplotype_block:
                             for record in all_short_reads[pb][b][h]:
-                                out_short_reads_haplotype_block.write(record[5].qname + "\1" + "\n")
+                                out_short_reads_haplotype_block.write(record[5].qname
+                                                                      + "/1" + "\n")
                     else:
                         with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read_1.list',
                                   "w") as out_short_reads_haplotype_block:
                             for record in all_short_reads[pb][b][h]:
                                 out_short_reads_haplotype_block.write(record[5].qname + "\n")
-                    if fastq_record_ending_weird:
-                        with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read_2.list',
-                                  "w") as out_short_reads_haplotype_block:
-                            for record in all_short_reads[pb][b][h]:
-                                out_short_reads_haplotype_block.write(record[5].qname + "\2" + "\n")
-                    else:
+                    if shortreads_2_fastq != None:
+                        if fastq_record_ending_weird:
+                            with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read_2.list',
+                                      "w") as out_short_reads_haplotype_block:
+                                for record in all_short_reads[pb][b][h]:
+                                    out_short_reads_haplotype_block.write(record[5].qname
+                                                                          + "/2" + "\n")
+                        else:
+                            with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read_2.list',
+                                      "w") as out_short_reads_haplotype_block:
+                                for record in all_short_reads[pb][b][h]:
+                                    out_short_reads_haplotype_block.write(record[5].qname + "\n")
                         with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read_2.list',
                                   "w") as out_short_reads_haplotype_block:
                             for record in all_short_reads[pb][b][h]:
                                 out_short_reads_haplotype_block.write(record[5].qname + "\n")
-                    with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read_2.list',
-                              "w") as out_short_reads_haplotype_block:
-                        for record in all_short_reads[pb][b][h]:
-                            out_short_reads_haplotype_block.write(record[5].qname + "\n")
                     os.system("seqkit grep -f " + output_dir + haplotype_dir + output_prefix + "_" + str(
-                        h) + '_short_read.list ' + shortreads_1_fastq + " > " + output_dir + haplotype_dir + output_prefix + "_" + str(
+                        h) + '_short_read_1.list ' + shortreads_1_fastq + " > " + output_dir + haplotype_dir + output_prefix + "_" + str(
                         h) + '_short_read_1.fastq')
                     if shortreads_2_fastq != None:
                         os.system("seqkit grep -f " + output_dir + haplotype_dir + output_prefix + "_" + str(
-                            h) + '_short_read.list ' + shortreads_2_fastq + " > " + output_dir + haplotype_dir + output_prefix + "_" + str(
+                            h) + '_short_read_2.list ' + shortreads_2_fastq + " > " + output_dir + haplotype_dir + output_prefix + "_" + str(
                             h) + '_short_read_2.fastq')
                     with open(output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_long_read.list',
                               "w") as out_long_reads_haplotype_block:
@@ -204,8 +208,6 @@ def Save_output(all_phase_matrix, ploidy_blocks, all_blocks, all_short_reads, al
                     os.system("seqkit grep -f " + output_dir + haplotype_dir + output_prefix + "_" + str(
                         h) + '_long_read.list ' + longreads_fasta + " > " + output_dir + haplotype_dir + output_prefix + "_" + str(
                         h) + '_long_read.fasta')
-                    pb_size = int(pb_name.split(",")[1]) + 12600 - int(pb_name.split(",")[0]) + 1
-                    print("pb name", pb_name, pb_size)
                     long_reads_path = output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_long_read.fasta'
                     short_1_path = output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read_1.fastq'
                     short_2_path = output_dir + haplotype_dir + output_prefix + "_" + str(h) + '_short_read_2.fastq'
@@ -215,6 +217,9 @@ def Save_output(all_phase_matrix, ploidy_blocks, all_blocks, all_short_reads, al
                     os.system(
                         "miniasm -f " + long_reads_path + " " + long_reads_overlap + " > " + output_dir + haplotype_dir + str(
                             h) + "_assembly.gfa")
+                    os.system(" awk '/^S/{print \">\"$2\"\n\"$3}' " + output_dir + haplotype_dir + str(
+                            h) + "_assembly.gfa" + " | fold > " + output_dir + haplotype_dir + str(
+                            h) + "_assembly.fa")
 
 def main():
     parser = argparse.ArgumentParser()
